@@ -14,10 +14,15 @@ use App\Repository\DepartementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: DepartementRepository::class)]
 #[ApiResource(
+    order: ['label', 'numero'],
     operations:[
+        
          new GetCollection(
              normalizationContext: ["groups" =>["departements:read:collection"]],
              //security: "is_granted('ROLE_USER')"
@@ -42,6 +47,7 @@ use Doctrine\ORM\Mapping as ORM;
         )
      ]
  )]
+ #[ApiFilter(SearchFilter::class, properties: ['region' => 'exact', 'label' => 'exact', 'numero' => 'exact'])]
  class Departement
 {
     #[ORM\Id]
@@ -50,15 +56,27 @@ use Doctrine\ORM\Mapping as ORM;
     private ?int $id = null;
 
     #[ORM\Column(length: 3)]
+    #[Groups(["departements:read", "departements:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 3)]
     private ?string $numero = null;
 
     #[ORM\Column(length: 100)]
     #[Groups(["departements:read:collection", "departements:read", "departements:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 100)]
     private ?string $label = null;
-    #[Groups(["departements:read", "departements:write"])]
+
     #[ORM\Column(length: 255)]
+    #[Groups(["departements:read", "departements:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 255)]
     private ?string $region = null;
 
+    ##[Groups(["departements:read", "departements:write"])]
     #[ORM\OneToMany(targetEntity: Mairie::class, mappedBy: 'departement', orphanRemoval: true)]
     private Collection $mairies;
 

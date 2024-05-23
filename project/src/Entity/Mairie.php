@@ -21,6 +21,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: MairieRepository::class)]
 #[ApiResource(
+    order: ['ville', 'codePostal'],
     operations:[
          new GetCollection(
              normalizationContext: ["groups" =>["mairies:read:collection"]],
@@ -46,7 +47,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
         )
      ]
  )]
- #[ApiFilter(SearchFilter::class, properties: ['codePostal' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['codePostal' => 'exact', 'ville' => 'exact', 'departement' => 'exact'])]
 class Mairie
 {
     #[ORM\Id]
@@ -56,30 +57,47 @@ class Mairie
 
     #[ORM\Column(length: 6)]
     #[Groups(["mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 6)]
     private ?string $codeInsee = null;
 
     #[ORM\Column(length: 5)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(min: 5, max: 5)]
     private ?string $codePostal = null;
 
     #[ORM\Column(length: 180)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 180)]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 180)]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 100)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(max: 100)]
     private ?string $ville = null;
 
     #[ORM\Column(length: 255,nullable: true)]
+    #[Assert\Length(max: 255)]
     #[Groups(["mairies:read", "mairies:write"])]
     private ?string $siteWeb = null;
 
     #[ORM\Column(length: 25,nullable: true)]
     #[Groups(["mairies:read", "mairies:write"])]
+    #[Assert\Length(max: 25)]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255,nullable: true)]
@@ -88,17 +106,23 @@ class Mairie
 
     #[ORM\Column(length: 20,nullable: true)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\Length(max: 20)]
     private ?string $latitude = null;
 
     #[ORM\Column(length: 20,nullable: true)]
     #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
+    #[Assert\Length(max: 20)]
     private ?string $longitude = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["mairies:read", "mairies:write"])]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?\DateTimeInterface $dateMaj = null;
 
     #[ORM\ManyToOne(inversedBy: 'mairies')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["mairies:read", "mairies:write"])]
     private ?Departement $departement = null;
 
     public function getId(): ?int
