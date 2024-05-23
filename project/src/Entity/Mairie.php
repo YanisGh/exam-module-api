@@ -2,10 +2,51 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\MairieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
 #[ORM\Entity(repositoryClass: MairieRepository::class)]
+#[ApiResource(
+    operations:[
+         new GetCollection(
+             normalizationContext: ["groups" =>["mairies:read:collection"]],
+             //security: "is_granted('ROLE_USER')"
+         ),
+        new Get(
+            normalizationContext: ["groups" => ["mairies:read"]],
+            //security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        ),
+        new Post(
+            normalizationContext: ["groups" => ["mairies:read"]],
+            denormalizationContext: ["groups" => ["mairies:write"]],
+            # processor: CreateTravelProcessor::class
+            #security: "is_granted('ROLE_USER')"
+        ),
+        new Patch(
+            normalizationContext: ["groups" => ["mairies:read"]],
+            denormalizationContext: ["groups" => ["mairies:write"]],
+            #security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        ),
+        new Delete(
+            #security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        )
+     ]
+ )]
+ #[ApiFilter(SearchFilter::class, properties: ['codePostal' => 'exact'])]
 class Mairie
 {
     #[ORM\Id]
@@ -14,33 +55,43 @@ class Mairie
     private ?int $id = null;
 
     #[ORM\Column(length: 6)]
+    #[Groups(["mairies:read", "mairies:write"])]
     private ?string $codeInsee = null;
 
     #[ORM\Column(length: 5)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $codePostal = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $ville = null;
 
     #[ORM\Column(length: 255,nullable: true)]
+    #[Groups(["mairies:read", "mairies:write"])]
     private ?string $siteWeb = null;
 
     #[ORM\Column(length: 25,nullable: true)]
+    #[Groups(["mairies:read", "mairies:write"])]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255,nullable: true)]
+    #[Groups(["mairies:read", "mairies:write"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 20,nullable: true)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $latitude = null;
 
     #[ORM\Column(length: 20,nullable: true)]
+    #[Groups(["mairies:read:collection", "mairies:read", "mairies:write"])]
     private ?string $longitude = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]

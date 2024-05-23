@@ -2,13 +2,47 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\DepartementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DepartementRepository::class)]
-class Departement
+#[ApiResource(
+    operations:[
+         new GetCollection(
+             normalizationContext: ["groups" =>["departements:read:collection"]],
+             //security: "is_granted('ROLE_USER')"
+         ),
+        new Get(
+            normalizationContext: ["groups" => ["departements:read"]],
+            //security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        ),
+        new Post(
+            normalizationContext: ["groups" => ["departements:read"]],
+            denormalizationContext: ["groups" => ["departements:write"]],
+            # processor: CreateTravelProcessor::class
+            #security: "is_granted('ROLE_USER')"
+        ),
+        new Patch(
+            normalizationContext: ["groups" => ["departements:read"]],
+            denormalizationContext: ["groups" => ["departements:write"]],
+            #security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        ),
+        new Delete(
+            #security: "is_granted('ROLE_USER') and object.getOwner() == user"
+        )
+     ]
+ )]
+ class Departement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -19,8 +53,9 @@ class Departement
     private ?string $numero = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(["departements:read:collection", "departements:read", "departements:write"])]
     private ?string $label = null;
-
+    #[Groups(["departements:read", "departements:write"])]
     #[ORM\Column(length: 255)]
     private ?string $region = null;
 
