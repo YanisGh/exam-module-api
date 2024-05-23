@@ -60,6 +60,6 @@ class SimpleCalculatorRequest
 
     public function process(): void
     {
-        $this->result = (($this->firstOperand * $this->SecondOperand) * 0.5);
+        $this->result = (($this->firstOperand * $this->SecondOperand) * 0.005);
     }
 }
