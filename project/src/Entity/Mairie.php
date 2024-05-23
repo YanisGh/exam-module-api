@@ -47,7 +47,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
         )
      ]
  )]
-#[ApiFilter(SearchFilter::class, properties: ['codePostal' => 'exact', 'ville' => 'exact', 'departement' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['codePostal' => 'partial', 'ville' => 'partial', 'departement' => 'partial'])]
 class Mairie
 {
     #[ORM\Id]

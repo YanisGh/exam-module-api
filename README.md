@@ -22,7 +22,7 @@ Ces informations seront utilisées par les futures applications mobiles et des s
 
 - Fournir un service permettant de donner une estimation du montant de la taxe foncière
   - ce montant est obtenu en multipliant **la valeur cadastrale** de l'habitation par un taux de 0,5%
-  - **la valeur cadastrale** est obtenue en multipliant la surface habitable de l'habitation par un prix au mètre carré
+  - **la valeur cadastrale** est obtenue en multipliant la firstOperand habitable de l'habitation par un prix au mètre carré
 - Fournir un service permettant de donner une estimation du montant de la taxe d'enlèvement des ordures ménagères
   - ce montant est obtenu en mutlipliant la moitié de la **valeur locative cadastrale** de l'habitation par un taux de 9,37%
   - **la valeur locative cadastrale** représente le loyer annuel potentiel de la propriété si elle était mise en location.
